@@ -3,237 +3,102 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Del celular al mapa</title>
-<meta name="description" content="Cómo un dato de campo cargado por una persona común termina en un mapa web que se puede analizar. Caso: basurales en el Gran Tucumán. GIS 4K07, UTN FRT.">
+<title>Basurales de Tucumán</title>
+<meta name="description" content="Mapa de basurales de San Miguel de Tucumán con datos oficiales de la Municipalidad y aportes de la comunidad, revisados antes de publicarse.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Public+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<a class="skip" href="#mapa">Ir al mapa</a>
-
-<header class="top">
-  <div class="top-in">
-    <a class="brand" href="#inicio">Del celular al mapa</a>
-    <nav class="flow-nav" aria-label="Etapas del flujo">
-      <a href="#campo"><span>1</span>Campo</a>
-      <a href="#registro"><span>2</span>Registro</a>
-      <a href="#mapa"><span>3</span>Mapa y análisis</a>
-      <a href="#calidad"><span>4</span>Calidad</a>
-      <a href="#cierre"><span>5</span>Cierre</a>
-    </nav>
-  </div>
+<header class="bar">
+  <h1>Basurales de Tucumán</h1>
+  <button type="button" class="icon-btn" id="btn-info" aria-label="Acerca de los datos">i</button>
 </header>
 
-<div id="banner-ejemplo" class="banner" hidden>
-  Los <b>pines con foto son datos de ejemplo</b>, inventados para probar la web. Los círculos azules y verdes del mapa son <b>datos oficiales</b> de la Municipalidad.
-</div>
+<div id="map" role="application" aria-label="Mapa de basurales"></div>
 
-<main>
-
-<section class="hero" id="inicio">
-  <div class="wrap hero-in">
-    <h1>Del celular al mapa</h1>
-    <p class="lead">Una persona saca una foto de un basural. Segundos después ese dato tiene coordenadas, vive en un mapa web y se puede contar, comparar y revisar. Acá se recorre ese camino completo con un caso del Gran Tucumán.</p>
-    <ol class="flow" aria-label="Resumen del flujo">
-      <li><a href="#campo"><b>Campo</b><span>foto, tipo y ubicación desde el celular</span></a></li>
-      <li><a href="#registro"><b>Registro</b><span>el dato queda geolocalizado</span></a></li>
-      <li><a href="#mapa"><b>Mapa y análisis</b><span>capas, escalas y una historia</span></a></li>
-      <li><a href="#calidad"><b>Calidad</b><span>controles antes de confiar</span></a></li>
-    </ol>
+<section class="panel" aria-label="Resumen y capas">
+  <div class="stats" id="stats" aria-live="polite"></div>
+  <div class="layers">
+    <label class="chip"><input type="checkbox" id="l-activo" checked><span><i class="dot activo"></i>Activos</span></label>
+    <label class="chip"><input type="checkbox" id="l-inactivo" checked><span><i class="dot inactivo"></i>Erradicados</span></label>
+    <label class="chip"><input type="checkbox" id="l-com" checked><span><i class="dot com"></i>Comunidad</span></label>
   </div>
 </section>
 
-<!-- 1. CAMPO -->
-<section class="stage" id="campo" aria-labelledby="t-campo">
-  <div class="wrap stage-grid">
-    <div class="stage-text">
-      <p class="stage-n">Etapa 1</p>
-      <h2 id="t-campo">En el campo</h2>
-      <p>Todo empieza afuera. Con el celular alcanza para registrar <b>qué</b> se ve, <b>dónde</b> está y <b>cuándo</b> se sacó.</p>
-      <p>El ensayo lo plantea así: toda información, ya sea una foto, un texto, un video o una dirección, se puede geolocalizar con un par de coordenadas, y entonces se puede mapear.</p>
-      <aside class="essay">
-        <span class="essay-k">En el ensayo</span>
-        <p>Esta etapa cumple el rol de <b>Collector for ArcGIS</b>: la app de campo con la que cada persona carga datos desde su teléfono.</p>
-      </aside>
-      <p class="try"><b>Probalo.</b> Cargá un punto en el formulario con forma de celular. Se guarda solo en este navegador, y en las etapas siguientes lo vas a ver aparecer.</p>
+<button type="button" class="fab" id="btn-add">+ Sumar un basural</button>
+
+<!-- Alta de un aporte -->
+<dialog id="dlg-add" aria-labelledby="t-add">
+  <form id="form-add" method="dialog" autocomplete="off">
+    <div class="dlg-head">
+      <h2 id="t-add">Sumar un basural</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Cerrar">×</button>
     </div>
+    <p class="note">Tu aporte no se publica enseguida: lo revisamos primero. Sacá la foto <b>estando en el lugar</b> y sin personas ni patentes.</p>
 
-    <div class="phone-col">
-      <form class="phone" id="form-punto" autocomplete="off" aria-label="Formulario para cargar un punto">
-        <div class="phone-bar"><span>Nuevo punto</span><span class="gps-dot" id="gps-dot" title="Estado del GPS"></span></div>
+    <label class="photo" id="photo-box" for="in-foto">
+      <img id="photo-prev" alt="Vista previa de la foto" hidden>
+      <span id="photo-ph">Tocá para sacar o elegir una foto</span>
+    </label>
+    <input type="file" id="in-foto" accept="image/*" capture="environment" class="sr">
 
-        <label class="photo" id="photo-box" for="in-foto">
-          <img id="photo-prev" alt="Vista previa de la foto" hidden>
-          <span id="photo-ph">
-            <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><rect x="6" y="14" width="36" height="24" rx="4" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="26" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M17 14l3-5h8l3 5" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>
-            <em>Sacar o elegir foto</em>
-          </span>
-        </label>
-        <input type="file" id="in-foto" accept="image/*" capture="environment" class="sr">
+    <fieldset>
+      <legend>¿Qué es?</legend>
+      <div class="chips" id="tipos"></div>
+    </fieldset>
 
-        <fieldset class="f-tipo">
-          <legend>¿Qué es?</legend>
-          <div id="tipos-form" class="chips"></div>
-        </fieldset>
+    <label class="field">Tamaño
+      <select id="in-vol">
+        <option value="chico">Chico (cabe en una bolsa)</option>
+        <option value="medio" selected>Medio (varias bolsas)</option>
+        <option value="grande">Grande (ocupa la vereda o la calle)</option>
+      </select>
+    </label>
 
-        <div class="f-row">
-          <label for="in-vol">Tamaño</label>
-          <select id="in-vol">
-            <option value="chico">Chico (una bolsa o dos)</option>
-            <option value="medio" selected>Medio (una vereda)</option>
-            <option value="grande">Grande (ocupa la calle)</option>
-          </select>
-        </div>
+    <label class="field">Nota (opcional)
+      <textarea id="in-nota" rows="2" maxlength="140" placeholder="Algo que ayude a ubicarlo"></textarea>
+    </label>
 
-        <label class="f-check"><input type="checkbox" id="in-rec"> Ya estaba, se repite</label>
-
-        <div class="f-row">
-          <label for="in-nota">Nota</label>
-          <textarea id="in-nota" rows="2" maxlength="140" placeholder="Algo que ayude a entender el lugar"></textarea>
-        </div>
-
-        <div class="f-loc">
-          <div id="mini-map" role="img" aria-label="Mapa para ubicar el punto"></div>
-          <div class="loc-row">
-            <button type="button" class="btn-ghost" id="btn-gps">Usar mi ubicación</button>
-            <output id="coord-out">Arrastrá el pin</output>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-main">Guardar punto</button>
-      </form>
-    </div>
-  </div>
-</section>
-
-<!-- 2. REGISTRO -->
-<section class="stage alt" id="registro" aria-labelledby="t-reg">
-  <div class="wrap">
-    <p class="stage-n">Etapa 2</p>
-    <h2 id="t-reg">El dato queda geolocalizado</h2>
-    <p class="stage-lead">Lo que se guardó no es solo una imagen. Es un registro con los datos que después permiten mapearlo y analizarlo.</p>
-    <div class="reg-grid">
-      <article class="rec" id="rec-card" aria-live="polite"></article>
-      <div class="rec-code">
-        <p class="rec-code-t" id="rec-code-t">Así lo ve el mapa</p>
-        <pre id="rec-json" tabindex="0"></pre>
-        <p class="note">Las coordenadas son el campo que hace que un dato común pase a ser un dato geográfico. Todo lo demás se sigue pudiendo filtrar, contar y comparar.</p>
+    <div class="field">
+      <span class="lbl">Ubicación</span>
+      <div id="mini-map" role="img" aria-label="Mapa para ubicar el punto"></div>
+      <div class="loc-row">
+        <button type="button" class="btn-ghost" id="btn-gps">Usar mi ubicación</button>
+        <output id="coord-out">Movés el pin si hace falta</output>
       </div>
     </div>
+
+    <label class="check"><input type="checkbox" id="in-ok"> La foto no muestra personas ni patentes</label>
+
+    <p class="error" id="msg-error" role="alert" hidden></p>
+    <button type="submit" class="btn" id="btn-send">Enviar para revisión</button>
+  </form>
+
+  <div id="done" hidden>
+    <div class="dlg-head"><h2>Listo, gracias</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar">×</button></div>
+    <p>Tu aporte quedó <b>pendiente de revisión</b>. Cuando lo aprobemos va a aparecer en el mapa.</p>
+    <button type="button" class="btn" data-close>Volver al mapa</button>
   </div>
-</section>
+</dialog>
 
-<!-- 3. MAPA Y ANÁLISIS -->
-<section class="stage" id="mapa" aria-labelledby="t-mapa">
-  <div class="wrap">
-    <p class="stage-n">Etapa 3</p>
-    <h2 id="t-mapa">Mapa web y análisis</h2>
-    <p class="stage-lead">Los puntos de todas las personas se juntan en un mapa en línea. Ahí se pueden mostrar capas distintas, cambiar de escala y contar una historia con lo que se ve.</p>
-    <aside class="essay wide">
-      <span class="essay-k">En el ensayo</span>
-      <p>Este mapa cumple el rol de <b>ArcGIS Online</b>, donde los datos de campo se muestran en la nube, a varias escalas y como capas. La pestaña Historia cumple el rol de los <b>Story Maps</b>.</p>
-    </aside>
-
-    <div class="map-layout">
-      <div class="map-col">
-        <div id="map" role="application" aria-label="Mapa de puntos de basurales"></div>
-        <div class="map-foot">
-          <output id="scale-out">Escala ≈ 1:—</output>
-          <span class="map-hint">Usá + y – o pellizcá. Clic en el mapa para activar la rueda.</span>
-        </div>
-      </div>
-
-      <div class="side">
-        <div class="tabs" role="tablist" aria-label="Panel del mapa">
-          <button role="tab" id="tab-capas" aria-selected="true" aria-controls="p-capas">Capas</button>
-          <button role="tab" id="tab-resumen" aria-selected="false" aria-controls="p-resumen">Resumen</button>
-          <button role="tab" id="tab-historia" aria-selected="false" aria-controls="p-historia">Historia</button>
-        </div>
-
-        <div class="tabpanel" id="p-capas" role="tabpanel" aria-labelledby="tab-capas">
-          <h3>Qué mostrar</h3>
-          <div id="filtros" class="chips"></div>
-          <h3>Capas</h3>
-          <label class="sw"><input type="checkbox" id="l-puntos" checked><span>Puntos</span></label>
-          <label class="sw"><input type="checkbox" id="l-dens"><span>Densidad <small>(celdas de 500 m)</small></span></label>
-          <label class="sw"><input type="checkbox" id="l-radio"><span>Radio de 200 m <small>(zona de influencia)</small></span></label>
-          <label class="sw"><input type="checkbox" id="l-oficial" checked><span>Basurales oficiales <small>(Municipalidad, corte 31/07/26)</small></span></label>
-          <p class="note">Los círculos azules (activos) y verdes (inactivos) son <b>datos oficiales</b> del <a href="https://smtendatos.gob.ar/basurales/" target="_blank" rel="noopener">Portal de Datos de la Municipalidad</a>. Tienen una ubicación aproximada calculada con OpenStreetMap a partir de la dirección. Los pines con foto son de ejemplo.</p>
-          <h3>Escala</h3>
-          <div class="btn-row">
-            <button type="button" class="btn-ghost" data-escala="prov">Provincia</button>
-            <button type="button" class="btn-ghost" data-escala="gran">Gran Tucumán</button>
-            <button type="button" class="btn-ghost" data-escala="zona">Zona crítica</button>
-          </div>
-          <p class="note">La misma capa se lee distinto según la escala: en la provincia son manchas, en la zona crítica se ve cada bolsa.</p>
-        </div>
-
-        <div class="tabpanel" id="p-resumen" role="tabpanel" aria-labelledby="tab-resumen" hidden>
-          <div id="resumen"></div>
-        </div>
-
-        <div class="tabpanel" id="p-historia" role="tabpanel" aria-labelledby="tab-historia" hidden>
-          <div id="historia"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 4. CALIDAD -->
-<section class="stage alt" id="calidad" aria-labelledby="t-cal">
-  <div class="wrap">
-    <p class="stage-n">Etapa 4</p>
-    <h2 id="t-cal">Calidad de los datos</h2>
-    <p class="stage-lead">Un mapa bien dibujado puede estar mal. Con datos de ciudadanos, cada punto pasa por controles automáticos antes de usarlo como evidencia.</p>
-    <aside class="essay wide">
-      <span class="essay-k">En el ensayo</span>
-      <p>Quien trabaja con ciencia ciudadana desarrolla pensamiento crítico: aprende a evaluar y usar los datos con cuidado, algo clave en los datos ambientales, que suelen ser sensibles y tener carga política.</p>
-    </aside>
-    <div class="cal-grid">
-      <div class="cal-sum" id="cal-sum"></div>
-      <div>
-        <h3>Puntos con observaciones</h3>
-        <ul class="cal-list" id="cal-list"></ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 5. CIERRE -->
-<section class="stage" id="cierre" aria-labelledby="t-cierre">
-  <div class="wrap">
-    <p class="stage-n">Etapa 5</p>
-    <h2 id="t-cierre">Qué se lleva el curso</h2>
-    <ol class="take">
-      <li><b>Cualquiera puede aportar datos.</b> Con un celular, la gente suma observaciones que las instituciones ya no alcanzan a juntar.</li>
-      <li><b>La ubicación es lo que lo vuelve geográfico.</b> Sin coordenadas, una foto es una foto. Con coordenadas, es un punto que se puede comparar con otros.</li>
-      <li><b>El análisis depende de la calidad.</b> Por eso hay que revisar cada dato antes de sacar conclusiones o pedir acciones.</li>
-    </ol>
-
-    <h3 class="eq-t">Equivalencias con el ensayo</h3>
-    <div class="eq">
-      <div class="eq-row eq-h"><span>En el ensayo (Esri)</span><span>En esta web</span></div>
-      <div class="eq-row"><span>Collector for ArcGIS</span><span>Formulario de la etapa 1</span></div>
-      <div class="eq-row"><span>Mapa en ArcGIS Online</span><span>Mapa de la etapa 3</span></div>
-      <div class="eq-row"><span>Story Maps</span><span>Pestaña Historia</span></div>
-      <div class="eq-row"><span>Evaluar los datos con cuidado</span><span>Controles de la etapa 4</span></div>
-    </div>
-
-    <p class="note credits">Ensayo: Joseph Kerski, «Geoenabling Citizen Science», <i>Essays on Geography and GIS</i>, vol. 7, Esri, 2014. Datos oficiales: Municipalidad de San Miguel de Tucumán, Dirección de Ambiente, <i>Mapa de basurales o volcaderos activos e inactivos</i>, Portal de Datos, corte 31/07/2026, consultado el 17/11/2026 (ubicaciones aproximadas calculadas por el autor con OpenStreetMap; trazabilidad en <code>datos-oficiales/FUENTE.md</code>). Mapa base: © colaboradores de OpenStreetMap, un mapa del mundo hecho por voluntarios. Visor: Leaflet. Estudiante: Juarez. GIS 4K07, UTN FRT, 2026.</p>
-  </div>
-</section>
-
-</main>
-
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<!-- Acerca de los datos -->
+<dialog id="dlg-info" aria-labelledby="t-info">
+  <div class="dlg-head"><h2 id="t-info">Acerca de los datos</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar">×</button></div>
+  <h3>Puntos azules y verdes</h3>
+  <p>Son los basurales o volcaderos de la <b>Municipalidad de San Miguel de Tucumán</b> (Dirección de Ambiente), con corte al <b>31/07/2026</b>. Azul: activo. Verde: erradicado.</p>
+  <p>El municipio publica solo la dirección. Las ubicaciones del mapa las calculamos con OpenStreetMap y son <b>aproximadas</b> (de unos 30 m a unos 150 m de error). No se pudieron ubicar 260 de los 470 registros.</p>
+  <h3>Aportes de la comunidad</h3>
+  <p>Cualquiera puede sumar un basural con una foto. Antes de publicarlo revisamos que la foto no muestre personas ni patentes y que el punto esté bien ubicado.</p>
+  <h3>Fuentes</h3>
+  <p class="note">Municipalidad de San Miguel de Tucumán. <a href="https://smtendatos.gob.ar/basurales/" target="_blank" rel="noopener">Mapa de basurales o volcaderos activos e inactivos</a>, Portal de Datos de la Ciudad. Mapa base © colaboradores de OpenStreetMap. Visor: Leaflet.</p>
+  <p class="note">Proyecto de Lucas Juárez para GIS (4K07, UTN FRT, 2026), a partir del ensayo «Geoenabling Citizen Science» de Joseph Kerski.</p>
+</dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="data/puntos.js"></script>
 <script src="data/oficial.js"></script>
 <script src="js/app.js"></script>
 </body>
