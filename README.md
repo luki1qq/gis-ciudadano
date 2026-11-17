@@ -23,6 +23,10 @@ python -m http.server 5280
 
 Abrí http://localhost:5280. Hace falta internet (mapa, Leaflet y la hoja).
 
+## Capa CONICET/UNT (opcional)
+
+`data/conicet.js` tiene los 512 puntos de San Miguel de Tucumán del relevamiento «Microbasurales en el Gran San Miguel de Tucumán (2022-2024)» (INTEPH e IER, UNT-CONICET, http://hdl.handle.net/11336/255324). Licencia **CC BY-NC-SA 2.5 AR**: uso no comercial, con atribución y compartir igual; ese archivo conserva esa licencia. Son de otra fecha y otra definición que los datos del municipio: un punto sin vecino oficial no prueba un basural sin declarar.
+
 ## Datos oficiales
 
 `data/oficial.js` se generó a partir de `datos-oficiales/` (no se publica en el repo; tiene la trazabilidad, el hash y las capturas). Cómo citarlo: Municipalidad de San Miguel de Tucumán, Dirección de Ambiente. *Mapa de basurales o volcaderos activos e inactivos*. Portal de Datos de la Ciudad, https://smtendatos.gob.ar/basurales/.
