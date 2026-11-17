@@ -1,0 +1,6 @@
+fotos-originales/
+__pycache__/
+# no se publican: material de la entrega, mensajes y datos crudos
+poster/
+datos-oficiales/
+mensaje-profe.md
