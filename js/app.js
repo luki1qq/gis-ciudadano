@@ -56,6 +56,22 @@
     gCon.addLayer(m);
   });
 
+  /* ---------- Denuncias vecinales: publicadas en medios y hechas por la app de Yerba Buena ---------- */
+  var gVec = L.layerGroup().addTo(map);
+  var vec = window.CIUDADANOS || { medios: [], app_yb: [] };
+  function fechaAR(f) { var p = String(f || '').split('-'); return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : esc(f); }
+  vec.medios.forEach(function (d) {
+    var m = L.marker([d.lat, d.lon], { icon: L.divIcon({ className: 'm-vec', html: '<svg width="22" height="20" viewBox="0 0 22 20"><path d="M11 1.5L20.5 18.5H1.5z" style="fill:var(--vec)" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>', iconSize: [22, 20], iconAnchor: [11, 12] }), keyboard: true, title: d.lugar, zIndexOffset: 500 });
+    m.bindPopup('<div class="pop"><h3>Denuncia vecinal</h3><p>' + esc(d.lugar) + '</p><p class="meta">Publicada en ' + esc(d.medio) + ' el ' + fechaAR(d.fecha) +
+      '. Ubicación aproximada, error de unos ' + esc(d.precision_m) + ' m.<br><a href="' + esc(d.url) + '" target="_blank" rel="noopener">Ver la nota</a></p></div>');
+    gVec.addLayer(m);
+  });
+  vec.app_yb.forEach(function (p) {
+    var m = L.marker(p, { icon: L.divIcon({ className: '', html: '<div class="m-vec-app"></div>', iconSize: [13, 13], iconAnchor: [6, 6] }), keyboard: false });
+    m.bindPopup('<div class="pop"><h3>Denuncia por app</h3><p class="meta">Hecha por un vecino con la app de la Municipalidad de Yerba Buena (2022-2024), incluida en el relevamiento CONICET/UNT. Licencia CC BY-NC-SA 2.5 AR.</p></div>');
+    gVec.addLayer(m);
+  });
+
   /* ---------- Aportes de la comunidad (solo los aprobados) ---------- */
   var nCom = 0;
   function parseCSV(text) {
@@ -105,7 +121,7 @@
   function capa(id, group) {
     $(id).addEventListener('change', function (e) { if (e.target.checked) map.addLayer(group); else map.removeLayer(group); });
   }
-  capa('#l-activo', gActivo); capa('#l-inactivo', gInactivo); capa('#l-com', gCom); capa('#l-con', gCon);
+  capa('#l-activo', gActivo); capa('#l-inactivo', gInactivo); capa('#l-com', gCom); capa('#l-con', gCon); capa('#l-vec', gVec);
 
   /* ---------- Diálogos ---------- */
   var dlgAdd = $('#dlg-add'), dlgInfo = $('#dlg-info');

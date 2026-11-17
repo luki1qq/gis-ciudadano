@@ -2,7 +2,7 @@
 :root{
   --bg:#F4F7F5; --surface:#FFFFFF; --ink:#12221B; --muted:#4B5F57; --line:#CFDAD4;
   --accent:#1B6A4D; --accent-ink:#FFFFFF; --accent-soft:#DAEEE4;
-  --activo:#17358F; --inactivo:#2A9D78; --com:#D55E00; --con:#8E4FB8; --bad:#A3321B; --focus:#0B57D0;
+  --activo:#17358F; --inactivo:#2A9D78; --com:#D55E00; --con:#8E4FB8; --vec:#C28A00; --bad:#A3321B; --focus:#0B57D0;
   --display:'Familjen Grotesk','Segoe UI',system-ui,sans-serif;
   --body:'Public Sans','Segoe UI',system-ui,sans-serif;
   color-scheme: light;
@@ -11,7 +11,7 @@
   :root{
     --bg:#0E1914; --surface:#182A22; --ink:#E5EFEA; --muted:#9DB5AA; --line:#2B433A;
     --accent:#5FCB9D; --accent-ink:#0B1A13; --accent-soft:#1B3A2D;
-    --activo:#7FA0FF; --inactivo:#5FCB9D; --com:#FF9A4D; --con:#C79BE8; --bad:#F29B86; --focus:#7FB0FF; color-scheme: dark;
+    --activo:#7FA0FF; --inactivo:#5FCB9D; --com:#FF9A4D; --con:#C79BE8; --vec:#F2C14E; --bad:#F29B86; --focus:#7FB0FF; color-scheme: dark;
   }
 }
 *{box-sizing:border-box}
@@ -48,7 +48,7 @@ a{color:var(--accent)}
 .chip input:checked + span{background:var(--accent-soft); border-color:var(--accent)}
 .chip input:focus-visible + span{outline:3px solid var(--focus); outline-offset:2px}
 .dot{display:inline-block; width:14px; height:14px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1.5px rgba(0,0,0,.4)}
-.dot.activo{background:var(--activo)} .dot.inactivo{background:var(--inactivo)} .dot.com{background:var(--com)} .dot.con{background:var(--con)}
+.dot.activo{background:var(--activo)} .dot.inactivo{background:var(--inactivo)} .dot.com{background:var(--com)} .dot.con{background:var(--con)} .dot.vec{background:var(--vec); border-radius:3px}
 
 /* Botón flotante */
 .fab{position:fixed; z-index:1100; left:50%; transform:translateX(-50%); bottom:calc(14px + env(safe-area-inset-bottom,0px));
@@ -59,6 +59,8 @@ a{color:var(--accent)}
 .m-of{width:16px; height:16px; border-radius:50%; border:2.5px solid #fff; box-shadow:0 0 0 1.5px rgba(0,0,0,.45)}
 .m-of.activo{background:var(--activo)} .m-of.inactivo{background:var(--inactivo)}
 .m-con{width:11px; height:11px; border-radius:3px; transform:rotate(45deg); background:var(--con); border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+.m-vec-app{width:13px; height:13px; border-radius:2px; background:var(--vec); border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+.m-vec svg{display:block; filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .m-com{width:28px; height:28px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:var(--com); border:3px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,.4)}
 .pop{min-width:200px; max-width:240px; font-size:.92rem}
 .pop h3{font-size:1rem; margin-bottom:4px}
