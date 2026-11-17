@@ -31,7 +31,7 @@
   }
   var map = base(L.map('map', { zoomControl: true }));
   map.attributionControl.setPrefix(false);
-  var gActivo = L.layerGroup().addTo(map), gInactivo = L.layerGroup().addTo(map), gCom = L.layerGroup().addTo(map);
+  var gCon = L.layerGroup(), gActivo = L.layerGroup().addTo(map), gInactivo = L.layerGroup().addTo(map), gCom = L.layerGroup().addTo(map);
 
   var of = (window.OFICIAL && window.OFICIAL.puntos) || [];
   var meta = (window.OFICIAL && window.OFICIAL.meta) || {};
@@ -46,6 +46,15 @@
     bounds.push([p.lat, p.lon]);
   });
   if (bounds.length) map.fitBounds(L.latLngBounds(bounds), { padding: [30, 30] }); else map.setView(CENTRO, 13);
+
+  /* ---------- Relevamiento CONICET/UNT (CC BY-NC-SA 2.5 AR), capa opcional ---------- */
+  var con = (window.CONICET && window.CONICET.puntos) || [];
+  con.forEach(function (p) {
+    var m = L.marker([p[0], p[1]], { icon: L.divIcon({ className: '', html: '<div class="m-con"></div>', iconSize: [11, 11], iconAnchor: [5, 5] }), keyboard: false });
+    m.bindPopup('<div class="pop"><h3>Microbasural relevado</h3><p class="meta">Relevamiento 2022-2024, ' + (p[2] ? 'dato de la Municipalidad' : 'INTEPH-IER (UNT-CONICET)') +
+      '. Sin dirección ni estado. Puede haberse limpiado o coincidir con un punto oficial. Licencia CC BY-NC-SA 2.5 AR.</p></div>');
+    gCon.addLayer(m);
+  });
 
   /* ---------- Aportes de la comunidad (solo los aprobados) ---------- */
   var nCom = 0;
@@ -96,7 +105,7 @@
   function capa(id, group) {
     $(id).addEventListener('change', function (e) { if (e.target.checked) map.addLayer(group); else map.removeLayer(group); });
   }
-  capa('#l-activo', gActivo); capa('#l-inactivo', gInactivo); capa('#l-com', gCom);
+  capa('#l-activo', gActivo); capa('#l-inactivo', gInactivo); capa('#l-com', gCom); capa('#l-con', gCon);
 
   /* ---------- Diálogos ---------- */
   var dlgAdd = $('#dlg-add'), dlgInfo = $('#dlg-info');

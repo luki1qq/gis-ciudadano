@@ -26,6 +26,7 @@
     <label class="chip"><input type="checkbox" id="l-activo" checked><span><i class="dot activo"></i>Activos</span></label>
     <label class="chip"><input type="checkbox" id="l-inactivo" checked><span><i class="dot inactivo"></i>Erradicados</span></label>
     <label class="chip"><input type="checkbox" id="l-com" checked><span><i class="dot com"></i>Comunidad</span></label>
+    <label class="chip"><input type="checkbox" id="l-con"><span><i class="dot con"></i>CONICET/UNT 2022-24</span></label>
   </div>
 </section>
 
@@ -91,15 +92,19 @@
   <h3>Puntos azules y verdes</h3>
   <p>Son los basurales o volcaderos de la <b>Municipalidad de San Miguel de Tucumán</b> (Dirección de Ambiente), con corte al <b>31/07/2026</b>. Azul: activo. Verde: erradicado.</p>
   <p>El municipio publica solo la dirección. Las ubicaciones del mapa las calculamos con OpenStreetMap y son <b>aproximadas</b> (de unos 30 m a unos 150 m de error). No se pudieron ubicar 260 de los 470 registros.</p>
+  <h3>Puntos violetas (opcional)</h3>
+  <p>Son los <b>microbasurales relevados por el INTEPH y el IER (UNT-CONICET)</b> entre 2022 y 2024 en San Miguel de Tucumán (512 puntos). Son de otra fecha y otra definición que los del municipio, así que un punto violeta sin punto azul o verde cerca <b>no significa</b> que haya un basural sin declarar. Se activan con el filtro «CONICET/UNT 2022-24».</p>
   <h3>Aportes de la comunidad</h3>
   <p>Cualquiera puede sumar un basural con una foto. Antes de publicarlo revisamos que la foto no muestre personas ni patentes y que el punto esté bien ubicado.</p>
   <h3>Fuentes</h3>
+  <p class="note">INTEPH e IER (UNT-CONICET). <a href="http://hdl.handle.net/11336/255324" target="_blank" rel="noopener">Microbasurales en el Gran San Miguel de Tucumán (2022-2024)</a>, Repositorio CONICET Digital. Licencia <a href="https://creativecommons.org/licenses/by-nc-sa/2.5/ar/" target="_blank" rel="noopener">CC BY-NC-SA 2.5 AR</a> (uso no comercial, con atribución y compartir igual).</p>
   <p class="note">Municipalidad de San Miguel de Tucumán. <a href="https://smtendatos.gob.ar/basurales/" target="_blank" rel="noopener">Mapa de basurales o volcaderos activos e inactivos</a>, Portal de Datos de la Ciudad. Mapa base © colaboradores de OpenStreetMap. Visor: Leaflet.</p>
   <p class="note">Proyecto de Lucas Juarez para GIS (4K07, UTN FRT, 2026), a partir del ensayo «Geoenabling Citizen Science» de Joseph Kerski.</p>
 </dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="data/oficial.js"></script>
+<script src="data/conicet.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
